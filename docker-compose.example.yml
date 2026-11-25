@@ -1,0 +1,23 @@
+services:
+  hearth:
+    build: .
+    container_name: hearth-energy
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      HA_URL: ${HA_URL}
+      HA_TOKEN: ${HA_TOKEN}
+      PORT: 3000
+      HOST: 0.0.0.0
+      TZ: ${TZ:-Europe/London}
+      ALLOW_ACTIONS: ${ALLOW_ACTIONS:-true}
+      PUBLIC_URL: ${PUBLIC_URL:-}
+      DATA_DIR: /app/data
+    volumes:
+      # audit log, settings, variables, VAPID keys, push subscriptions, alert state
+      - ./data:/app/data
+    # Put this behind a reverse proxy with authentication rather than
+    # exposing port 3000 to the internet.

@@ -1,0 +1,15 @@
+{
+  "name": "hearth-energy",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Self-hosted home energy dashboard for Home Assistant + Predbat",
+  "scripts": {
+    "dev": "concurrently -n server,web -c cyan,magenta \"npm run dev --prefix server\" \"npm run dev --prefix web\"",
+    "build": "npm run build --prefix web && npm run build --prefix server",
+    "start": "npm run start --prefix server",
+    "install:all": "npm install --prefix server && npm install --prefix web"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
