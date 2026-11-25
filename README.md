@@ -4,7 +4,7 @@ A self-hosted home energy dashboard for [Home Assistant](https://www.home-assist
 
 Hearth does **not** replace Predbat or Home Assistant. It reads (and, if you allow it, sends a small set of) entities that you map in **Settings → Variables**. Your Home Assistant long-lived token never leaves the server and is never sent to the browser.
 
-> **Screenshots.** Add a few once you have a public demo or anonymised captures — suggested spots: Overview (live power flow), the Predbat plan, Financials, and Settings → Variables.
+![Overview](screenshots/Overview.png) ![Overview](screenshots/powerprint.png)
 
 ## Features
 
