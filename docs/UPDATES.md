@@ -2,7 +2,7 @@
 
 Hearth is designed so you can publish a release on GitHub and pull it onto the machine that runs the dashboard.
 
-The published image name is `ghcr.io/<owner>/hearth`, where `<owner>` is the GitHub user or organisation that owns the repository. Replace `<owner>` before you use the examples below.
+The published image name is `ghcr.io/jamesdonovan/hearth`, where `<owner>` is the GitHub user or organisation that owns the repository. Replace `<owner>` before you use the examples below.
 
 ## Pull a published image
 
@@ -12,8 +12,8 @@ On the host that runs Hearth:
 
 ```bash
 # After the first image has been published
-docker pull ghcr.io/<owner>/hearth:latest
-# or pin a release: docker pull ghcr.io/<owner>/hearth:12
+docker pull ghcr.io/jamesdonovan/hearth:latest
+# or pin a release: docker pull ghcr.io/jamesdonovan/hearth:12
 docker compose up -d
 ```
 
@@ -22,7 +22,7 @@ Point `docker-compose.yml` at the image instead of `build: .` if you want update
 ```yaml
 services:
   hearth:
-    image: ghcr.io/<owner>/hearth:latest
+    image: ghcr.io/jamesdonovan/hearth:latest
     # …
 ```
 
@@ -56,4 +56,4 @@ Copy `variables.json` (and `settings.json` if you want a rollback) out of `DATA_
 1. Create the GitHub repository (you choose the name and whether it is public or private).
 2. Replace `<owner>` in this document and in `docker-compose.yml` if you use the image form above.
 3. Push `main`, then `git tag v12 && git push origin v12` (or the current version).
-4. Confirm the package appears at `https://github.com/<owner>/<repo>/pkgs/container/hearth` and, for a private repo, that the host can log in to GHCR.
+4. Confirm the package appears at `https://github.com/jamesdonovan/hearth-energy/pkgs/container/hearth` and, for a private repo, that the host can log in to GHCR.

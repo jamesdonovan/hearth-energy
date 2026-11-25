@@ -78,7 +78,7 @@ These are honest limits of this first public cut, not blockers for a typical UK 
 
 ## Updating
 
-See [UPDATES.md](UPDATES.md) for the two supported flows: pull a published image from `ghcr.io/<owner>/hearth` and restart, or `git pull` and rebuild. The `DATA_DIR` volume (including `variables.json` and `settings.json`) survives either path. Take a copy of `data/variables.json` before a major upgrade if you want a rollback.
+See [UPDATES.md](UPDATES.md) for the two supported flows: pull a published image from `ghcr.io/jamesdonovan/hearth` and restart, or `git pull` and rebuild. The `DATA_DIR` volume (including `variables.json` and `settings.json`) survives either path. Take a copy of `data/variables.json` before a major upgrade if you want a rollback.
 
 The Docker image starts as root so it can make `DATA_DIR` writable, then drops to the `node` user. If the directory still cannot be written, the container exits with a clear error.
 

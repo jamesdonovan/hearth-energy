@@ -28,8 +28,8 @@ You can start with a partial mapping. Missing sensors show as "—" or zero; see
 ## Quick start
 
 ```bash
-git clone https://github.com/YOUR_USER/hearth.git
-cd hearth
+git clone https://github.com/jamesdonovan/hearth-energy.git
+cd hearth-energy
 cp .env.example .env
 # Edit .env: set HA_URL and HA_TOKEN. Do not commit .env.
 cp docker-compose.example.yml docker-compose.yml   # already present as docker-compose.yml
