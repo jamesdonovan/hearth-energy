@@ -35,3 +35,8 @@ npm run build --prefix server
 - New entity roles should be optional where possible, so a partial config still loads.
 - If you change Variables defaults, update `docs/INTEGRATIONS.md` and `server/test/variables.test.mjs`.
 - Be kind in review; small, focused PRs are easier to land.
+
+
+## Contributor terms
+
+By submitting a contribution (a pull request, patch, or other suggested change) you license that contribution to the author, James Donovan, under the same PolyForm Noncommercial License 1.0.0 that covers this repository, and you also grant the author the right to relicense your contribution, including under commercial terms. This keeps Hearth free for personal and noncommercial use while leaving the author free to offer a commercial licence later.

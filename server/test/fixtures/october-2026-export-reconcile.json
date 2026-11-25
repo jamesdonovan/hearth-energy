@@ -1,0 +1,219 @@
+[
+  {
+    "date": "2026-10-01",
+    "official": 18.593,
+    "powerwall": 18.637,
+    "meter": 0.0,
+    "flag": false
+  },
+  {
+    "date": "2026-10-02",
+    "official": 21.473,
+    "powerwall": 21.537,
+    "meter": 0.0,
+    "flag": false
+  },
+  {
+    "date": "2026-10-03",
+    "official": 37.918,
+    "powerwall": 37.534,
+    "meter": 85.985,
+    "flag": true
+  },
+  {
+    "date": "2026-10-04",
+    "official": 29.408,
+    "powerwall": 29.49,
+    "meter": 29.408,
+    "flag": false
+  },
+  {
+    "date": "2026-10-05",
+    "official": 24.229,
+    "powerwall": 23.57,
+    "meter": 24.229,
+    "flag": true
+  },
+  {
+    "date": "2026-10-06",
+    "official": 10.64,
+    "powerwall": 9.905,
+    "meter": 10.64,
+    "flag": true
+  },
+  {
+    "date": "2026-10-07",
+    "official": 28.13,
+    "powerwall": 27.856,
+    "meter": 28.13,
+    "flag": false
+  },
+  {
+    "date": "2026-10-08",
+    "official": 18.559,
+    "powerwall": 18.353,
+    "meter": 18.559,
+    "flag": false
+  },
+  {
+    "date": "2026-10-09",
+    "official": 28.304,
+    "powerwall": 28.104,
+    "meter": 28.304,
+    "flag": false
+  },
+  {
+    "date": "2026-10-10",
+    "official": 17.62,
+    "powerwall": 17.672,
+    "meter": 17.62,
+    "flag": false
+  },
+  {
+    "date": "2026-10-11",
+    "official": 34.605,
+    "powerwall": 34.509,
+    "meter": 34.605,
+    "flag": false
+  },
+  {
+    "date": "2026-10-12",
+    "official": 15.625,
+    "powerwall": 15.29,
+    "meter": 15.625,
+    "flag": true
+  },
+  {
+    "date": "2026-10-13",
+    "official": 36.701,
+    "powerwall": 36.57,
+    "meter": 36.701,
+    "flag": false
+  },
+  {
+    "date": "2026-10-14",
+    "official": 14.957,
+    "powerwall": 14.667,
+    "meter": 14.957,
+    "flag": false
+  },
+  {
+    "date": "2026-10-15",
+    "official": 2.243,
+    "powerwall": 2.16,
+    "meter": 2.243,
+    "flag": false
+  },
+  {
+    "date": "2026-10-16",
+    "official": 21.17,
+    "powerwall": 20.816,
+    "meter": 21.17,
+    "flag": true
+  },
+  {
+    "date": "2026-10-17",
+    "official": 38.089,
+    "powerwall": 37.991,
+    "meter": 38.089,
+    "flag": false
+  },
+  {
+    "date": "2026-10-18",
+    "official": 37.623,
+    "powerwall": 37.466,
+    "meter": 37.623,
+    "flag": false
+  },
+  {
+    "date": "2026-10-19",
+    "official": 18.371,
+    "powerwall": 17.972,
+    "meter": 18.371,
+    "flag": true
+  },
+  {
+    "date": "2026-10-20",
+    "official": 7.238,
+    "powerwall": 7.139,
+    "meter": 7.238,
+    "flag": false
+  },
+  {
+    "date": "2026-10-21",
+    "official": 9.92,
+    "powerwall": 9.735,
+    "meter": 9.92,
+    "flag": false
+  },
+  {
+    "date": "2026-10-22",
+    "official": 26.337,
+    "powerwall": 26.45,
+    "meter": 26.337,
+    "flag": false
+  },
+  {
+    "date": "2026-10-23",
+    "official": 4.49,
+    "powerwall": 4.29,
+    "meter": 4.49,
+    "flag": false
+  },
+  {
+    "date": "2026-10-24",
+    "official": 3.705,
+    "powerwall": 3.731,
+    "meter": 3.705,
+    "flag": false
+  },
+  {
+    "date": "2026-10-25",
+    "official": null,
+    "powerwall": 7.718,
+    "meter": 7.708,
+    "flag": false
+  },
+  {
+    "date": "2026-10-26",
+    "official": 0.534,
+    "powerwall": 0.55,
+    "meter": 0.534,
+    "flag": false
+  },
+  {
+    "date": "2026-10-27",
+    "official": 25.522,
+    "powerwall": 25.598,
+    "meter": 25.522,
+    "flag": false
+  },
+  {
+    "date": "2026-10-28",
+    "official": 9.015,
+    "powerwall": 8.453,
+    "meter": 9.015,
+    "flag": true
+  },
+  {
+    "date": "2026-10-29",
+    "official": 15.88,
+    "powerwall": 15.557,
+    "meter": 15.88,
+    "flag": true
+  },
+  {
+    "date": "2026-10-30",
+    "official": 26.809,
+    "powerwall": 26.631,
+    "meter": 26.809,
+    "flag": false
+  },
+  {
+    "date": "2026-10-31",
+    "official": 30.189,
+    "powerwall": 30.152,
+    "meter": 30.189,
+    "flag": false
+  }
+]

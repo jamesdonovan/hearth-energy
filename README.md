@@ -12,6 +12,7 @@ Hearth does **not** replace Predbat or Home Assistant. It reads (and, if you all
 - Tonight's Predbat plan, a 30-minute plan timeline, and Powerwall charge / export windows
 - Cars: planned vs actual overnight charging, Intelligent Octopus Go dispatches, charger power history
 - Financials and a "what if I had no solar or battery" counterfactual, using official Octopus statistics where you map them
+- Octopus reconciliation (Energy tab): official daily import/export kWh versus Powerwall, with the same style of date-range picker as Financials, optional meter fill for missing official days, and CSV export
 - PowerPrint: detects appliance-sized runs, splits energy into solar / battery / grid, and compares grid cost with the shifted cost
 - Alerts (in-app, Web Push, optional Telegram) for a missed planned charge, a cheap IOG slot, a low battery, an export-rate spike, lost car data, and a daily cost budget
 - **Settings → Variables** — map your own Home Assistant entities in four groups (Home Energy, Vehicles, Energy Tariff, Predbat). Add or remove cars, link a charger to a car or keep it standalone. Changes apply immediately, with no rebuild. Values are stored in `variables.json` next to your other settings.
@@ -37,7 +38,7 @@ docker compose up -d --build
 
 Open http://localhost:3000, go to **Settings → Variables**, and map your entities. Recommended names for Tesla Powerwall, Tesla Fleet, Kia UVO, Ohme, Octopus Energy, Solcast and Predbat are listed in [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md).
 
-Full walkthrough, reverse-proxy notes, and a development install: [docs/SETUP.md](docs/SETUP.md).
+Full walkthrough, reverse-proxy notes, and a development install: [docs/SETUP.md](docs/SETUP.md). For later updates (`docker pull` of the published image, or `git pull` and a rebuild), see [docs/UPDATES.md](docs/UPDATES.md).
 
 ## Configuration
 
@@ -63,7 +64,11 @@ Fallback unit rates, the off-peak window, battery capacity and PowerPrint thresh
 
 ## Licence
 
-No licence file is included yet. **MIT** is the suggested default for a dashboard others can fork and run; **GPL-3.0** is the better fit if you want derivative services to stay open source. See the discussion in the repository notes when this copy was prepared.
+Hearth is licensed under the [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0). See [LICENSE](LICENSE).
+
+It is free to use for personal and other noncommercial purposes. Commercial use (including selling the software, offering it as a paid service, or using it in a commercial product) needs permission from the author. The author can grant a separate commercial licence later.
+
+Required Notice: Copyright (c) 2026 James Donovan
 
 ## Contributing
 

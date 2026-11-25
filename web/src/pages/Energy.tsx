@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { fmtTimeFull, timeAxisProps, useWidth } from "../lib/chartAxis";
 import { fetchHistory, fetchPlan, fetchStats, type PlanData } from "../lib/api";
 import { FinancialsPanel } from "../components/Financials";
+import { ReconcilePanel } from "../components/Reconcile";
 import { PowerPrintPanel } from "../components/PowerPrint";
 import { fetchPowerPrint } from "../lib/api";
 import { useHa, usePoll } from "../lib/store";
@@ -21,12 +22,12 @@ import {
   YAxis,
 } from "recharts";
 
-type Tab = "plan" | "financials" | "analysis" | "powerprint";
+type Tab = "plan" | "financials" | "analysis" | "powerprint" | "reconciliation";
 
 export function Energy() {
   const [tab, setTabState] = useState<Tab>(() => {
     const t = new URLSearchParams(window.location.search).get("tab");
-    return t === "financials" || t === "analysis" || t === "plan" || t === "powerprint" ? (t as Tab) : "plan";
+    return t === "financials" || t === "analysis" || t === "plan" || t === "powerprint" || t === "reconciliation" ? (t as Tab) : "plan";
   });
   const { data: pp } = usePoll(() => fetchPowerPrint(1), 300000);
   const ppInbox = pp?.inbox_total ?? 0;
@@ -39,10 +40,11 @@ export function Energy() {
       q.delete("start");
       q.delete("end");
     } else q.set("tab", t);
-    if (t !== "financials") {
+    if (t !== "financials" && t !== "reconciliation") {
       q.delete("period");
       q.delete("start");
       q.delete("end");
+      q.delete("fill");
     }
     const qs = q.toString();
     window.history.replaceState(null, "", window.location.pathname + (qs ? `?${qs}` : ""));
@@ -86,11 +88,11 @@ export function Energy() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Energy</h1>
           <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>
-            Predbat’s next 30 hours, Octopus rates, import/export costs, and the numbers behind the plan.
+            Predbat’s next 30 hours, Octopus rates, import/export costs, official vs Powerwall reconciliation, and the numbers behind the plan.
           </p>
         </div>
         <div className="flex max-w-full overflow-x-auto rounded-full p-1" style={{ background: "var(--card)", boxShadow: "0 0 0 1px var(--line)" }}>
-          {(["plan", "financials", "analysis", "powerprint"] as const).map((t) => (
+          {(["plan", "financials", "reconciliation", "analysis", "powerprint"] as const).map((t) => (
             <button
               key={t}
               type="button"
@@ -98,7 +100,7 @@ export function Energy() {
               className={`relative shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium sm:px-4 ${t === "powerprint" ? "" : "capitalize"} ${tab === t ? "bg-white/10" : ""}`}
               style={{ color: tab === t ? "var(--text)" : "var(--muted)" }}
             >
-              {t === "powerprint" ? "PowerPrint" : t}
+              {t === "powerprint" ? "PowerPrint" : t === "reconciliation" ? "Reconciliation" : t}
               {t === "powerprint" && ppInbox > 0 && (
                 <span className="ml-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-house px-1 text-[10px] font-semibold text-ink-950">{ppInbox}</span>
               )}
@@ -176,6 +178,8 @@ export function Energy() {
       )}
 
       {tab === "financials" && <FinancialsPanel />}
+
+      {tab === "reconciliation" && <ReconcilePanel />}
 
       {tab === "analysis" && <AnalysisPanel />}
 

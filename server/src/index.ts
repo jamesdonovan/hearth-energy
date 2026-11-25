@@ -25,6 +25,7 @@ import { counterfactual } from "./counterfactual.js";
 import { planView } from "./planview.js";
 import { detectNow, labelEvent, manageAppliance, onDetected, powerPrintBreakdown, powerPrintView, startPowerPrint, takeRunsToNotify } from "./powerprint.js";
 import { parsePeriod, periodCacheKey } from "./period.js";
+import { buildReconcile, reconcileToCsv } from "./reconcile.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -168,6 +169,43 @@ app.get("/api/financials", async (req, res) => {
     res.json(data);
   } catch (err) {
     res.status(502).json({ error: err instanceof Error ? err.message : "financials failed" });
+  }
+});
+
+
+let reconcileCache = new Map<string, { at: number; data: Awaited<ReturnType<typeof buildReconcile>> }>();
+app.get("/api/reconcile", async (req, res) => {
+  let period;
+  try {
+    period = parsePeriod(req.query as Record<string, unknown>, new Date(), "last_month");
+  } catch (err) {
+    res.status(400).json({ error: err instanceof Error ? err.message : "bad period" });
+    return;
+  }
+  const fillRaw = String(req.query.fill ?? "1").toLowerCase();
+  const fillMissing = !["0", "false", "no"].includes(fillRaw);
+  const asCsv = String(req.query.format ?? "").toLowerCase() === "csv";
+  try {
+    const key = `${periodCacheKey(period)}:fill=${fillMissing}`;
+    const hit = reconcileCache.get(key);
+    let data: Awaited<ReturnType<typeof buildReconcile>>;
+    if (hit && Date.now() - hit.at < 5 * 60 * 1000) {
+      data = hit.data;
+    } else {
+      data = await buildReconcile(ha, period, fillMissing);
+      reconcileCache.set(key, { at: Date.now(), data });
+      if (reconcileCache.size > 30) reconcileCache.delete(reconcileCache.keys().next().value as string);
+    }
+    if (asCsv) {
+      const name = `hearth-reconcile-${data.period.start}-${data.period.end}.csv`;
+      res.setHeader("Content-Type", "text/csv; charset=utf-8");
+      res.setHeader("Content-Disposition", `attachment; filename="${name}"`);
+      res.send(reconcileToCsv(data));
+      return;
+    }
+    res.json(data);
+  } catch (err) {
+    res.status(502).json({ error: err instanceof Error ? err.message : "reconcile failed" });
   }
 });
 

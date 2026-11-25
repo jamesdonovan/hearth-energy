@@ -17,7 +17,7 @@ export function dataWritable(): boolean {
     fs.unlinkSync(probe);
     writable = true;
   } catch (err) {
-    console.error(`Data dir ${DATA_DIR} is not writable; settings, alerts and audit log will not persist:`, (err as Error).message);
+    console.error(`DATA_DIR ${DATA_DIR} is not writable; settings, variables, alerts and the audit log will not persist:`, (err as Error).message, "If you are running the Docker image, the entrypoint should chown this directory; otherwise fix volume permissions and restart.");
     writable = false;
   }
   return writable;

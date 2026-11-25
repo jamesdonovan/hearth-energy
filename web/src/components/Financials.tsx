@@ -13,42 +13,21 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { fetchFinancials, type FinancialsData, type PeriodKey, type PeriodSel } from "../lib/api";
+import { fetchFinancials, type FinancialsData, type PeriodSel } from "../lib/api";
 import { fmtGbp, fmtKwh, fmtRateP } from "../lib/format";
 import { dateCategoryAxisProps, fmtDateKeyFull, fmtDateKeyShort, useWidth } from "../lib/chartAxis";
 import { Card, CardHeader, Metric } from "./Card";
+import { FINANCIALS_PRESETS, PeriodPicker, fmtDay, londonToday, validPeriod } from "./PeriodPicker";
 
-const PRESETS: { key: PeriodKey; label: string }[] = [
-  { key: "1d", label: "1D" },
-  { key: "4d", label: "4D" },
-  { key: "14d", label: "14D" },
-  { key: "30d", label: "30D" },
-  { key: "6m", label: "6M" },
-  { key: "12m", label: "12M" },
-  { key: "custom", label: "Custom" },
-];
 const LS_KEY = "hearth.financials.period";
-const isDate = (s: string | null | undefined): s is string => !!s && /^\d{4}-\d{2}-\d{2}$/.test(s);
-function londonToday(): string {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/London", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
-}
-function shiftDate(d: string, n: number): string {
-  const t = new Date(`${d}T12:00:00Z`);
-  t.setUTCDate(t.getUTCDate() + n);
-  return t.toISOString().slice(0, 10);
-}
-function validPeriod(p: Partial<PeriodSel> | null | undefined): PeriodSel | null {
-  if (!p || !PRESETS.some((x) => x.key === p.key)) return null;
-  if (p.key === "custom") return isDate(p.start) && isDate(p.end) && p.start <= p.end ? { key: "custom", start: p.start, end: p.end } : null;
-  return { key: p.key as PeriodKey };
-}
+const allowed = FINANCIALS_PRESETS.map((p) => p.key);
 /** Period from the URL (?period=6m or ?period=custom&start=&end=), else the last one used on this device, else 14D. */
 function initialPeriod(): PeriodSel {
   const q = new URLSearchParams(window.location.search);
-  const fromUrl = validPeriod({ key: q.get("period") as PeriodKey, start: q.get("start") ?? undefined, end: q.get("end") ?? undefined });
+  const fromUrl = validPeriod({ key: q.get("period") as PeriodSel["key"], start: q.get("start") ?? undefined, end: q.get("end") ?? undefined }, allowed);
   if (fromUrl) return fromUrl;
   try {
-    const saved = validPeriod(JSON.parse(localStorage.getItem(LS_KEY) || "null"));
+    const saved = validPeriod(JSON.parse(localStorage.getItem(LS_KEY) || "null"), allowed);
     if (saved) return saved;
   } catch {
     /* ignore */
@@ -72,9 +51,6 @@ function rememberPeriod(p: PeriodSel) {
     q.delete("end");
   }
   window.history.replaceState(null, "", `${window.location.pathname}?${q.toString()}`);
-}
-function fmtDay(d: string) {
-  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`));
 }
 
 function fmtDelta(pct: number | null | undefined, invertGood = false) {
@@ -114,17 +90,11 @@ function sourceLabel(kind: string | undefined) {
 export function FinancialsPanel() {
   const [period, setPeriodState] = useState<PeriodSel>(initialPeriod);
   const today = londonToday();
-  const [draft, setDraft] = useState<{ start: string; end: string }>(() => ({
-    start: period.key === "custom" && period.start ? period.start : shiftDate(today, -29),
-    end: period.key === "custom" && period.end ? period.end : today,
-  }));
-  const [showCustom, setShowCustom] = useState(period.key === "custom");
   const setPeriod = (p: PeriodSel) => {
     setPeriodState(p);
     rememberPeriod(p);
   };
   const periodKey = `${period.key}:${period.start ?? ""}:${period.end ?? ""}`;
-  const draftOk = isDate(draft.start) && isDate(draft.end) && draft.start <= draft.end && draft.end <= today;
   const [data, setData] = useState<FinancialsData | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -209,80 +179,17 @@ export function FinancialsPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm" style={{ color: "var(--muted)" }}>
-          Import, export and net cost from Octopus meters. Unsettled days (usually today, sometimes yesterday’s export) are estimated from energy × rate.
-        </p>
-        <div className="flex max-w-full flex-wrap rounded-full p-1" style={{ background: "var(--card)", boxShadow: "0 0 0 1px var(--line)" }} role="group" aria-label="Period">
-          {PRESETS.map((w) => {
-            const on = w.key === "custom" ? showCustom || period.key === "custom" : !showCustom && period.key === w.key;
-            return (
-              <button
-                key={w.key}
-                type="button"
-                aria-pressed={on}
-                onClick={() => {
-                  if (w.key === "custom") setShowCustom(true);
-                  else {
-                    setShowCustom(false);
-                    setPeriod({ key: w.key });
-                  }
-                }}
-                className={`rounded-full px-3 py-1.5 text-sm font-medium ${on ? "bg-white/10" : ""}`}
-                style={{ color: on ? "var(--text)" : "var(--muted)" }}
-              >
-                {w.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {showCustom && (
-        <form
-          className="flex flex-wrap items-end gap-3 rounded-2xl p-4"
-          style={{ background: "var(--card)", boxShadow: "0 0 0 1px var(--line)" }}
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (draftOk) setPeriod({ key: "custom", start: draft.start, end: draft.end });
-          }}
-        >
-          <label className="flex flex-col gap-1 text-xs" style={{ color: "var(--muted)" }}>
-            From
-            <input
-              type="date"
-              aria-label="Start date"
-              value={draft.start}
-              max={draft.end || today}
-              onChange={(e) => setDraft((d) => ({ ...d, start: e.target.value }))}
-              className="rounded-lg bg-white/5 px-3 py-2 text-sm"
-              style={{ color: "var(--text)", colorScheme: "dark" }}
-            />
-          </label>
-          <label className="flex flex-col gap-1 text-xs" style={{ color: "var(--muted)" }}>
-            To
-            <input
-              type="date"
-              aria-label="End date"
-              value={draft.end}
-              min={draft.start}
-              max={today}
-              onChange={(e) => setDraft((d) => ({ ...d, end: e.target.value }))}
-              className="rounded-lg bg-white/5 px-3 py-2 text-sm"
-              style={{ color: "var(--text)", colorScheme: "dark" }}
-            />
-          </label>
-          <button type="submit" disabled={!draftOk} className="rounded-full bg-white/10 px-4 py-2 text-sm font-medium disabled:opacity-40">
-            Show range
-          </button>
-          {!draftOk && <span className="text-xs text-gridin">Pick a start on or before the end, ending today or earlier.</span>}
-          {period.key === "custom" && (
-            <span className="text-xs" style={{ color: "var(--muted)" }}>
-              Showing {fmtDay(period.start!)} – {fmtDay(period.end!)}
-            </span>
-          )}
-        </form>
-      )}
+      <PeriodPicker
+        presets={FINANCIALS_PRESETS}
+        period={period}
+        onChange={setPeriod}
+        today={today}
+        leading={
+          <p className="text-sm" style={{ color: "var(--muted)" }}>
+            Import, export and net cost from Octopus meters. Unsettled days (usually today, sometimes yesterday’s export) are estimated from energy × rate.
+          </p>
+        }
+      />
 
       {data && (
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" style={{ color: "var(--muted)" }}>

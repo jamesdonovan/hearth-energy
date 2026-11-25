@@ -284,7 +284,7 @@ export function fetchStats() {
   return getJson<Record<string, unknown>>("/api/stats");
 }
 
-export type PeriodKey = "1d" | "4d" | "14d" | "30d" | "6m" | "12m" | "custom";
+export type PeriodKey = "1d" | "4d" | "7d" | "14d" | "30d" | "6m" | "12m" | "this_month" | "last_month" | "custom";
 export type PeriodSel = { key: PeriodKey; start?: string; end?: string };
 export type Coverage = {
   requested_start: string;
@@ -307,6 +307,99 @@ export function periodQuery(p: PeriodSel): string {
 export function fetchFinancials(p: PeriodSel) {
   return getJson<FinancialsData>(`/api/financials?${periodQuery(p)}`);
 }
+
+export type ReconcileDay = {
+  date: string;
+  official_kwh: number | null;
+  meter_kwh: number | null;
+  filled_kwh: number | null;
+  powerwall_kwh: number | null;
+  diff_kwh: number | null;
+  diff_pct: number | null;
+  official_missing: boolean;
+  filled_from_meter: boolean;
+  mismatch: boolean;
+};
+export type ReconcileTotals = {
+  official_kwh: number;
+  official_days: number;
+  powerwall_kwh: number;
+  powerwall_days: number;
+  filled_kwh: number;
+  filled_days: number;
+  meter_kwh: number;
+  meter_days: number;
+  abs_diff_kwh: number | null;
+  pct_diff: number | null;
+  overlap_official_kwh: number;
+  overlap_powerwall_kwh: number;
+  overlap_days: number;
+  overlap_abs_diff_kwh: number | null;
+  overlap_pct_diff: number | null;
+  filled_abs_diff_kwh: number | null;
+  filled_pct_diff: number | null;
+  mismatch_days: number;
+  missing_official_days: string[];
+};
+export type ReconcileMonthRow = {
+  month: string;
+  official_kwh: number;
+  official_days: number;
+  powerwall_kwh: number;
+  powerwall_days: number;
+  filled_kwh: number;
+  filled_days: number;
+  meter_kwh: number;
+  missing_official_days: number;
+  mismatch_days: number;
+  diff_kwh: number | null;
+  diff_pct: number | null;
+  mismatch: boolean;
+};
+export type ReconcileSeries = {
+  kind: "export" | "import";
+  official_id: string | null;
+  powerwall_id: string | null;
+  meter_id: string | null;
+  days: ReconcileDay[];
+  months: ReconcileMonthRow[];
+  totals: ReconcileTotals;
+};
+export type ReconcilePeriod = {
+  key: PeriodKey;
+  label: string;
+  start: string;
+  end: string;
+  days: number;
+  today: string;
+  includes_today: boolean;
+};
+export type ReconcileData = {
+  period: ReconcilePeriod;
+  fill_missing: boolean;
+  timezone: string;
+  mismatch_abs_kwh: number;
+  mismatch_pct: number;
+  export: ReconcileSeries;
+  import: ReconcileSeries;
+};
+export function fetchReconcile(p: PeriodSel, fillMissing: boolean) {
+  const q = new URLSearchParams({ period: p.key, fill: fillMissing ? "1" : "0" });
+  if (p.key === "custom" && p.start && p.end) {
+    q.set("start", p.start);
+    q.set("end", p.end);
+  }
+  return getJson<ReconcileData>(`/api/reconcile?${q.toString()}`);
+}
+export function reconcileCsvUrl(p: PeriodSel, fillMissing: boolean) {
+  const q = new URLSearchParams({ period: p.key, fill: fillMissing ? "1" : "0", format: "csv" });
+  if (p.key === "custom" && p.start && p.end) {
+    q.set("start", p.start);
+    q.set("end", p.end);
+  }
+  return `/api/reconcile?${q.toString()}`;
+}
+
 
 export function fetchHistory(entityIds: string[], start: string, end: string) {
   const q = new URLSearchParams({ entity_ids: entityIds.join(","), start, end });
